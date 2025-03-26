@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toko Kelontong Pak Pudin</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('https://tse2.mm.bing.net/th?id=OIP.8AGyrhNboa6-DIPZsYw_HgHaEc&pid=Api&P=0&h=180') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.371); /* Background putih dengan transparansi */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2, h3 {
+            text-align: center;
+            color: #0056b3;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        input, button {
+            display: block;
+            width: 100%;
+            margin-top: 10px;
+            padding: 8px;
+        }
+
+        button {
+            background-color: #28a745; /* Warna hijau untuk tombol */
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #218838; /* Warna saat hover */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff; /* Warna biru untuk header tabel */
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2; /* Warna abu-abu untuk baris genap */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Toko Kelontong Pak Pudin</h2>
+
+        <h3>Selamat Datang di Toko Kelontong Pak Pudin</h3>
+        
+        <h3>Entri Data Produk</h3>
+        <input type="text" id="namaProduk" placeholder="Nama Produk">
+        <input type="number" id="stokProduk" placeholder="Stok">
+        <button onclick="tambahProduk()">Tambah Produk</button>
+        <table id="tabelProduk"><tr><th>Produk</th><th>Stok</th></tr></table>
+
+        <h3>Entri Data Pelanggan</h3>
+        <input type="text" id="namaPelanggan" placeholder="Nama Pelanggan">
+        <button onclick="tambahPelanggan()">Tambah Pelanggan</button>
+        <table id="tabelPelanggan"><tr><th>Pelanggan</th></tr></table>
+
+        <h3>Entri Transaksi Penjualan</h3>
+        <input type="text" id="transProduk" placeholder="Nama Produk">
+        <input type="number" id="transJumlah" placeholder="Jumlah">
+        <input type="number" id="transHarga" placeholder="Harga Satuan">
+        <button onclick="tambahTransaksi()">Tambah Transaksi</button>
+        <table id="tabelTransaksi"><tr><th>Produk</th><th>Jumlah</th><th>Harga</th><th>Total</th><th>Tanggal</th></tr></table>
+        
+        <h3>Rekapitulasi Penjualan</h3>
+        <h4 style="color: #d9534f;">Harian</h4>
+        <table id="rekapHarian"><tr><th>Tanggal</th><th>Total Penjualan</th></tr></table>
+        <h4 style="color: #f0ad4e;">Bulanan</h4>
+        <table id="rekapBulanan"><tr><th>Bulan</th><th>Total Penjualan</th></tr></table>
+        <h4 style="color: #5bc0de;">Tahunan</h4>
+        <table id="rekapTahunan"><tr><th>Tahun</th><th>Total Penjualan</th></tr></table>
+    </div>
+
+    <script>
+        let produk = [];
+        let pelanggan = [];
+        let transaksi = [];
+
+        function tambahProduk() {
+            let nama = document.getElementById('namaProduk').value;
+            let stok = document.getElementById('stokProduk').value;
+            if (nama && stok) {
+                produk.push({ nama, stok });
+                updateTabelProduk();
+                document.getElementById('namaProduk').value = "";
+                document.getElementById('stokProduk').value = "";
+            }
+        }
+        function updateTabelProduk() {
+            let tabel = document.getElementById('tabelProduk');
+            tabel.innerHTML = '<tr><th>Produk</th><th>Stok</th></tr>' + 
+                produk.map(p => `<tr><td>${p.nama}</td><td>${p.stok}</td></tr>`).join('');
+        }
+        
+        function tambahPelanggan() {
+            let nama = document.getElementById('namaPelanggan').value;
+            if (nama) {
+                pelanggan.push(nama);
+                updateTabelPelanggan();
+                document.getElementById('namaPelanggan').value = "";
+            }
+        }
+        function updateTabelPelanggan() {
+            let tabel = document.getElementById('tabelPelanggan');
+            tabel.innerHTML = '<tr><th>Pelanggan</th></tr>' + 
+                pelanggan.map(p => `<tr><td>${p}</td></tr>`).join('');
+        }
+        
+        function tambahTransaksi() {
+            let namaProduk = document.getElementById('transProduk').value;
+            let jumlah = document.getElementById('transJumlah').value;
+            let harga = document.getElementById('transHarga').value;
+            let total = jumlah * harga;
+            let tanggal = new Date().toLocaleDateString('id-ID');
+            if (namaProduk && jumlah && harga) {
+                transaksi.push({ produk: namaProduk, jumlah, harga, total, tanggal });
+                updateTabelTransaksi();
+                updateRekapitulasi();
+                document.getElementById('transProduk').value = "";
+                document.getElementById('transJumlah').value = "";
+                document.getElementById('transHarga').value = "";
+            }
+        }
+        function updateTabelTransaksi() {
+            let tabel = document.getElementById('tabelTransaksi');
+            tabel.innerHTML = '<tr><th>Produk</th><th>Jumlah</th><th>Harga</th><th>Total</th><th>Tanggal</th></tr>' +
+                transaksi.map(t => `<tr><td>${t.produk}</td><td>${t.jumlah}</td><td>${t.harga}</td><td>${t.total}</td><td>${t.tanggal}</td></tr>`).join('');
+        }
+        
+        function updateRekapitulasi() {
+            let rekapHarian = {};
+            let rekapBulanan = {};
+            let rekapTahunan = {};
+            transaksi.forEach(t => {
+                let [day, month, year] = t.tanggal.split('/');
+                rekapHarian[t.tanggal] = (rekapHarian[t.tanggal] || 0) + t.total;
+                let bulanKey = `${month}-${year}`;
+                rekapBulanan[bulanKey] = (rekapBulanan[bulanKey] || 0) + t.total;
+                rekapTahunan[year] = (rekapTahunan[year] || 0) + t.total;
+            });
+            document.getElementById('rekapHarian').innerHTML = '<tr><th>Tanggal</th><th>Total Penjualan</th></tr>' +
+                Object.entries(rekapHarian).map(([tgl, total]) => `<tr><td>${tgl}</td><td>${total}</td></tr>`).join('');
+            document.getElementById('rekapBulanan').innerHTML = '<tr><th>Bulan</th><th>Total Penjualan</th></tr>' +
+                Object.entries(rekapBulanan).map(([bln, total]) => `<tr><td>${bln}</td><td>${total}</td></tr>`).join('');
+            document.getElementById('rekapTahunan').innerHTML = '<tr><th>Tahun</th><th>Total Penjualan</th></tr>' +
+                Object.entries(rekapTahunan).map(([thn, total]) => `<tr><td>${thn}</td><td>${total}</td></tr>`).join('');
+        }
+    </script>
+</body>
+</html>
